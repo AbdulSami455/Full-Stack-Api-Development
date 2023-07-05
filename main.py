@@ -7,7 +7,7 @@ from random import randrange
 from passlib.context import CryptContext
 import psycopg2
 from psycopg2.extras import  RealDictCursor
-
+#from .routers import posts,users
 pwd_context=CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 #from .import model
