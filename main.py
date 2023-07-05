@@ -1,9 +1,15 @@
+import random
+
 from fastapi import FastAPI,Response,status,HTTPException,Depends
 from fastapi.params import Body
 from pydantic import BaseModel
 from random import randrange
+from passlib.context import CryptContext
 import psycopg2
 from psycopg2.extras import  RealDictCursor
+
+pwd_context=CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 #from .import model
 #from sqlalchemy.orm import Session
 #from .database import SessionLocal,engine
@@ -33,6 +39,10 @@ class Post(BaseModel):
     title : str
     content : str
     publication : bool=True
+
+class user(BaseModel):
+    email: str
+    password: str
 
 
 my_post=[{"title":"Post1","content":"this is Post Number 1","id":1},{"title":"Post2","content":"this is second post","id":2}]
@@ -64,6 +74,27 @@ def create_posts(new_post: Post):
 
     return {"Message": "start one"}
 
+
+@app.post("/user")
+
+def create_users(newuser: user):
+
+
+    # Hashing Password
+    hashedpass=pwd_context.hash(newuser.password)
+    newuser.password=hashedpass
+    num=random.randrange(4,90000)
+    cursor.execute("""insert into users(id,email,password)values(%s,%s,%s)""",(num,newuser.email,newuser.password))
+    conn.commit()
+
+    return {"message":"done"}
+
+@app.get("/user")
+def get_user():
+    cursor.execute("""select * from users""")
+    db00=cursor.fetchall()
+    conn.commit()
+    return {"messgae":db00}
 def find_post(id):
     for p in my_post:
         if p["id"]==id:
