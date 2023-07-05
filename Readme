@@ -10,4 +10,5 @@ i will go through full Api Development
 7. Introducing pydantic for schema validation and etc
 8.Creating array and get data from array
 9. Store data in array by post request and get it by get request
-10.
+10. Learn Some Database in Postgresql
+11. Connect Python with POstgresql

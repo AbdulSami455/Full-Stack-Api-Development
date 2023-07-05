@@ -2,8 +2,18 @@ from fastapi import FastAPI,Response,status,HTTPException
 from fastapi.params import Body
 from pydantic import BaseModel
 from random import randrange
+import psycopg2
+from psycopg2.extras import  RealDictCursor
 app=FastAPI()
 
+
+try:
+    conn=psycopg2.connect(host='localhost',database='fastapi',user='postgres',password='abdullah@1234',cursor_factory=RealDictCursor)
+    cursor=conn.cursor()
+    print("Database Connection was Successful")
+except Exception as error:
+    print("Failed")
+    print("Error:",error)
 
 class Post(BaseModel):
     title : str
@@ -19,17 +29,19 @@ def root():
 @app.get("/posts")
 
 def get_posts():
-    return {"Post":my_post}
+    cursor.execute("select * from posts")
+    posts=cursor.fetchall()
+    print(posts)
+    return {"Post":posts}
 
 
 @app.post("/posts")
 
 def create_posts(new_post: Post):
-    print(new_post.dict())
-    post_dict=new_post.dict()
-    post_dict['id']=randrange(0,100000000)
-    my_post.append(post_dict)
-    return {"Message": my_post}
+    #cursor.execute("""insert into posts(title,content,published)values(%s,%s,%s)returning *""",(new_post.title,new_post.content,new_post.publication))
+    #dbpost=cursor.fetchone()
+
+    return {"Message": "start one"}
 
 def find_post(id):
     for p in my_post:
@@ -39,14 +51,18 @@ def find_post(id):
 
 def get_posts(id:int):
   print(id)
-  post1=find_post(id)
-  if not post1:
+  cursor.execute("""SELECT * from posts WHERE id = %s""",(str(id)))
+  postst=cursor.fetchone()
+  #print(postst)
+  #post1=find_post(id)
+  if not postst:
       raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Not Found")
-  return  {"post detail":post1}
+  return  {"post detail":postst}
 
 
 
 
-#@app.delete("/posts/{id}")
+@app.delete("/posts/{id}")
 
-#def delete_posts(id:int):
+def delete_posts(id: int):
+     cursor.execute("""delete from posts where id = %s returning *""",(str(id)))
