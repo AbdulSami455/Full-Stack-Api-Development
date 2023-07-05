@@ -1,10 +1,24 @@
-from fastapi import FastAPI,Response,status,HTTPException
+from fastapi import FastAPI,Response,status,HTTPException,Depends
 from fastapi.params import Body
 from pydantic import BaseModel
 from random import randrange
 import psycopg2
 from psycopg2.extras import  RealDictCursor
+#from .import model
+#from sqlalchemy.orm import Session
+#from .database import SessionLocal,engine
+
+#model.Base.metadata.create_all(bind=engine)
+
 app=FastAPI()
+
+"""def get_db():
+    db=SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()"""
+
 
 
 try:
@@ -25,6 +39,13 @@ my_post=[{"title":"Post1","content":"this is Post Number 1","id":1},{"title":"Po
 @app.get("/")
 def root():
     return {"message":"Hello1234567"}
+
+
+
+
+#@app.get("/sqlalchemy")
+#def tests_posts(db: Session= Depends(get_db)):
+ #  return {"status":"Return"}
 
 @app.get("/posts")
 
@@ -66,3 +87,4 @@ def get_posts(id:int):
 
 def delete_posts(id: int):
      cursor.execute("""delete from posts where id = %s returning *""",(str(id)))
+     conn.commit()
