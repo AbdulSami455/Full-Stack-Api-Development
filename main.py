@@ -9,6 +9,7 @@ import psycopg2
 from psycopg2.extras import  RealDictCursor
 #from .routers import posts,users
 pwd_context=CryptContext(schemes=["bcrypt"], deprecated="auto")
+from fastapi.middleware.cors import CORSMiddleware
 
 #from .import model
 #from sqlalchemy.orm import Session
@@ -17,6 +18,20 @@ pwd_context=CryptContext(schemes=["bcrypt"], deprecated="auto")
 #model.Base.metadata.create_all(bind=engine)
 
 app=FastAPI()
+
+origins = [
+    "http://www.google.com",
+
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 """def get_db():
     db=SessionLocal()
