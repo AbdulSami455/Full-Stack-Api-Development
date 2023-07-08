@@ -18,7 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 #model.Base.metadata.create_all(bind=engine)
 
 app=FastAPI()
-
+#hello to code
 origins = [
     "http://www.google.com",
 
